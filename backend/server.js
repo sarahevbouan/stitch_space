@@ -27,10 +27,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/auth", authRoute);
-app.use("/api/pieces", pieceRoute);
-app.use("/api/collections", collectionRoutes);
-app.use("/api/requests", requestRoutes);
+app.use("/auth", authRoute);
+app.use("/pieces", pieceRoute);
+app.use("/collections", collectionRoutes);
+app.use("/requests", requestRoutes);
 app.use((req, res) => {
   res.sendFile(path.join(entry_route, "/index.html"));
 });
