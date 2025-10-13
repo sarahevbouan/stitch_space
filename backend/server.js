@@ -10,7 +10,6 @@ const requestRoutes = require("./routes/requestRoutes");
 require("dotenv").config();
 const entry_route = path.join(__dirname, "../frontend/dist");
 
-// console.log(process.env);
 const port = process.env.PORT || 6000;
 const DB_uri = process.env.DB_URI;
 mongoose.connect(DB_uri).then(() => console.log("Connected to DB"));

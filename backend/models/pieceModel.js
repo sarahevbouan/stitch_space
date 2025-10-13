@@ -1,7 +1,7 @@
 // convention is to create separate model file for each collection
 
 const mongoose = require("mongoose");
-// const userModel = require("./userModel");
+
 const Schema = mongoose.Schema;
 
 const pieceSchema = new Schema(
@@ -50,13 +50,3 @@ const pieceSchema = new Schema(
 
 const pieceModel = new mongoose.model("Piece", pieceSchema);
 module.exports = pieceModel;
-
-// {
-//     designerId: ""
-//     pieceName: "vanqy",
-//     description: "good",
-//     material: "cotton",
-//     color: "red",
-//     price: 800,
-//     imageUrl: "https"
-//   }
