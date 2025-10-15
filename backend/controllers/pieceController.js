@@ -1,10 +1,30 @@
 const mongoose = require("mongoose");
 const pieceModel = require("../models/pieceModel");
+const path = require("path");
+const multer = require("multer");
+const uuidv4 = require("uuid").v4;
+const cloudinaryUploader = require("../services/apiCloudinary");
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+const multerUpload = () => {
+  return upload.fields([
+    { name: "imageUrl", maxCount: 1 },
+    { name: "imageCarousel", maxCount: 4 },
+  ]);
+};
 
 const storePiece = async (req, res) => {
   try {
-    // const id = new mongoose.Types.ObjectId(req.body.designerId);
-    const newPiece = new pieceModel(req.body);
+    const coverPhoto = req.files.imageUrl[0];
+    const designPhotos = req.files.imageCarousel;
+    const imageArray = await cloudinaryUploader(coverPhoto, designPhotos);
+    const imageUrl = imageArray[0];
+    const imageCarousel = imageArray
+      .slice(-4)
+      .map((url) => ({ id: uuidv4(), url }));
+
+    const newPiece = new pieceModel({ ...req.body, imageUrl, imageCarousel });
     await newPiece.save();
     res.json({ message: "You have added a new piece to your collection" });
   } catch (error) {
@@ -32,4 +52,5 @@ const getPieces = async (req, res) => {
 module.exports = {
   storePiece,
   getPieces,
+  multerUpload,
 };
