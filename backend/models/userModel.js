@@ -21,6 +21,10 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    location: {
+      type: String,
+      required: true,
+    },
     // tailor-specific
     bio: {
       type: String,
@@ -28,12 +32,7 @@ const userSchema = new Schema(
         return this.role === "designer";
       },
     },
-    location: {
-      type: String,
-      required: function () {
-        return this.role === "designer";
-      },
-    },
+
     //remmeber to add this
     // customer-specific
     //   savedCollections: [ObjectId], // references Piece

@@ -6,8 +6,10 @@ const Schema = mongoose.Schema;
 
 const pieceSchema = new Schema(
   {
-    designerId: {
+    designer: {
+      // this is the designerID
       //find a way to link to userid
+      //designerId is the field required from frontend input field
       type: Schema.Types.ObjectId,
       required: true,
       ref: "User",

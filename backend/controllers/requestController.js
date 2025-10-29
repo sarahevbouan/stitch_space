@@ -24,11 +24,15 @@ const getRequests = async (req, res) => {
     } else if (role === "customer") {
       set_id.customerId = id;
     } else {
-      res.status(500).json({ message: "Invalid role" });
+      return res.status(500).json({ message: "Invalid role" });
     }
-    const requests = await requestModel.find(set_id);
+    const requests = await requestModel
+      .find(set_id)
+      .populate("customerId", "name")
+      .populate("designerId", "name")
+      .populate("pieces");
     if (!requests) {
-      res.status(500).json({ message: "No request found" });
+      return res.status(500).json({ message: "No request found" });
     }
     res.json({ requests: requests, total: requests.length });
   } catch (error) {

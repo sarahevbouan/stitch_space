@@ -1,15 +1,25 @@
 const express = require("express");
+const multer = require("multer");
+
 const {
   storePiece,
   getPieces,
-  multerUpload,
+  // multerUpload,
 } = require("../controllers/pieceController");
 const { isAuthWare } = require("../controllers/authController");
 const pieceRoute = express.Router();
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
+const multerUpload = upload.fields([
+  { name: "imageUrl", maxCount: 1 },
+  { name: "imageCarousel", maxCount: 4 },
+]);
+
+pieceRoute.get("/", getPieces);
 pieceRoute.get("/:designerId", getPieces);
-pieceRoute.use(isAuthWare);
-pieceRoute.post("/", multerUpload(), storePiece);
+// pieceRoute.use(isAuthWare);
+pieceRoute.post("/", multerUpload, storePiece);
 
 module.exports = pieceRoute;
 

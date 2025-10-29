@@ -6,7 +6,7 @@ const {
 } = require("../controllers/requestController");
 const requestRoutes = express.Router();
 
-requestRoutes.use(isAuthWare);
+// requestRoutes.use(isAuthWare);
 requestRoutes.post("/", createRequest);
 requestRoutes.get("/", getRequests);
 

@@ -26,7 +26,7 @@ const requestSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "contacted", "completed"],
+    enum: ["pending", "active", "completed"],
     default: "pending",
   },
   created_At: {

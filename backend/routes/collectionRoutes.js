@@ -7,7 +7,7 @@ const {
 const { isAuthWare } = require("../controllers/authController");
 const collectionRoutes = express.Router();
 
-collectionRoutes.use(isAuthWare);
+// collectionRoutes.use(isAuthWare);
 collectionRoutes.post("/", createCollection);
 collectionRoutes.post("/add", addPiece);
 collectionRoutes.get("/:customerId", getCollections);

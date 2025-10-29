@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
+// const multer = require("multer");
 const userModel = require("../models/userModel");
+// upload
 
 const registerUser = async (req, res) => {
   try {
@@ -9,7 +11,7 @@ const registerUser = async (req, res) => {
     const user = await userModel.findOne({ email });
     if (user) {
       //return a message to frontend
-      res.status(404).json({ message: "User already exists" });
+      return res.status(401).json({ message: "User already exists" });
     }
     //frontend sends a user object with properties indicated in the usermodel
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -26,23 +28,33 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     //required frontend fields are email, password
+    console.log(req.body);
     const { email, password } = req.body;
     const user = await userModel.findOne({ email });
     if (!user) {
-      res.status(404).json({ message: "Invalid user credentials" });
+      return res
+        .status(401)
+        .json({ message: "Incorrect username or password" });
     }
     const isMatched = await bcrypt.compare(password, user.password);
     if (!isMatched) {
-      res
-        .status(400)
-        .json({ message: "Invalid user credentials", isAuthenticated: false });
+      res.status(401).json({
+        message: "Incorrect username or password",
+        isAuthenticated: false,
+      });
     } else {
       req.session.isAuthenticated = true;
       res.json({
         message: "Login successful",
         isAuthenticated: true,
         //convention is to send only necessary data to frontend
-        user: { name: user.name, role: user.role, id: user._id },
+        user: {
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          id: user._id,
+          location: user.location,
+        },
       });
     }
   } catch (error) {
@@ -54,15 +66,15 @@ const logoutUser = async (req, res) => {
   try {
     req.session.destroy();
     res.clearCookie("connect.sid");
-    res.json({ message: "Logged out" });
+    res.json({ message: "Logged out", isAuthenticated: false });
   } catch (error) {
-    res.status(500).json({ message: error.message || "Action failed" });
+    res.status(400).json({ message: "Action failed" });
   }
 };
 
 const isAuthWare = (req, res, next) => {
   if (req.session.isAuthenticated) {
-    return next();
+    next();
   }
   res.status(401).json({ message: "Unauthorised" });
 };
