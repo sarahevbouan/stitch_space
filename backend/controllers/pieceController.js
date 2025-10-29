@@ -1,23 +1,14 @@
 const mongoose = require("mongoose");
 const pieceModel = require("../models/pieceModel");
 const path = require("path");
-const multer = require("multer");
 const uuidv4 = require("uuid").v4;
 const cloudinaryUploader = require("../services/apiCloudinary");
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-const multerUpload = () => {
-  return upload.fields([
-    { name: "imageUrl", maxCount: 1 },
-    { name: "imageCarousel", maxCount: 4 },
-  ]);
-};
 
 const storePiece = async (req, res) => {
+  console.log(req.files["imageUrl"], req.files["imageCarousel"], req.body);
   try {
-    const coverPhoto = req.files.imageUrl[0];
-    const designPhotos = req.files.imageCarousel;
+    const coverPhoto = req.files["imageUrl"][0];
+    const designPhotos = req.files["imageCarousel"];
     const imageArray = await cloudinaryUploader(coverPhoto, designPhotos);
     const imageUrl = imageArray[0];
     const imageCarousel = imageArray
@@ -36,14 +27,24 @@ const getPieces = async (req, res) => {
   try {
     const { designerId } = req.params;
     //implement fetching all blogs regardless of designer later on
-    const pieces = await pieceModel.find({ designerId: designerId });
-    if (!pieces) {
-      res.status(404).json({ message: "No piece under such designer" });
+    const pieces = designerId
+      ? await pieceModel
+          .find({ designer: designerId })
+          .populate("designer", "name")
+      : await pieceModel.find({}).populate("designer", "name");
+    if (!pieces.length) {
+      res.status(404).json({ message: "No piece was found" });
     }
     //all pieces returned with their information
     // so in frontend, when a user clicks on individual piece,
-    // don't have to query db for a single pice detail to use, already have it
-    res.json({ pieces: pieces, total: pieces.length, designerId: designerId });
+    // don't have to query db for a single piece detail to use, already have it
+    res.json({
+      pieces: pieces,
+      total: pieces.length,
+      designerName: designerId
+        ? pieces[0]?.designer.name || pieces?.designer.name
+        : null,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message || "Internal server error" });
   }
@@ -52,5 +53,5 @@ const getPieces = async (req, res) => {
 module.exports = {
   storePiece,
   getPieces,
-  multerUpload,
+  // multerUpload,
 };
