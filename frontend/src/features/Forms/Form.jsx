@@ -1,4 +1,3 @@
-import { motion } from "motion/react";
 import SubmitBtn from "../../ui/SubmitBtn";
 const Form = ({
   submitBtnText,
